@@ -1,18 +1,23 @@
 /**
- * This renders a single <h1> element and verifies that
- * Vite + React are correctly configured.
+ * App.jsx
+ * -------------------------------------------------------------
+ * Step 2:
+ *   - Import and render the <Hello /> component.
+ *   - Later we will replace this with a real layout.
  */
+import Hello from "./components/Hello.jsx";
+
 export default function App() {
   return (
-    <div
+    <main
       style={{
-        height: "100vh",
+        minHeight: "100vh",
         display: "grid",
         placeItems: "center",
         fontFamily: "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto",
       }}
     >
-      <h1>Brainbay — React scaffold is running 🚀</h1>
-    </div>
+      <Hello name="Cem" />
+    </main>
   );
 }
