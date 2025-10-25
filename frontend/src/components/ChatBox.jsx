@@ -1,19 +1,21 @@
 /**
- * ChatBox.jsx
- * -------------------------------------------------------------
- * Minimal chat client that:
- *  - Keeps conversationId and history returned by the backend
- *  - Sends user input to /api/chat
- *  - Renders full message history via <Messages />
+ * Make ChatBox controlled from App for conversation selection:
+ * Props:
+ *  - conversationId, setConversationId
+ *  - history, setHistory
  */
 import { useState } from "react";
 import { sendChat } from "../lib/api.js";
 import Messages from "./Messages.jsx";
 
-export default function ChatBox() {
+export default function ChatBox({
+  conversationId,
+  setConversationId,
+  history,
+  setHistory,
+  onConversationUpdate, // ✅ new optional prop
+}) {
   const [message, setMessage] = useState("");
-  const [conversationId, setConversationId] = useState(null);
-  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
 
@@ -26,11 +28,14 @@ export default function ChatBox() {
 
     try {
       const data = await sendChat(trimmed, conversationId || undefined);
-      // Keep latest conversation id and full history from the server
       setConversationId(data.conversation_id);
       setHistory(data.history || []);
       setMessage("");
-    } catch (error) {
+
+
+// refresh sidebar if provided
+if (onConversationUpdate) onConversationUpdate();
+    } catch {
       setErr("Failed to send message.");
     } finally {
       setLoading(false);
@@ -38,7 +43,6 @@ export default function ChatBox() {
   }
 
   function resetConversation() {
-    // Local reset: start a brand new conversation on next send
     setConversationId(null);
     setHistory([]);
   }

@@ -1,131 +1,164 @@
 /* -------------------------------------------------------------
- * Global styles for Brainbay Frontend
- * Purpose:
- *   - Collect inline styles here instead of keeping them in JSX.
- *   - Keeps our components cleaner.
- * ------------------------------------------------------------- */
+ * Global reset & tokens
+ * ----------------------------------------------------------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
 
+:root {
+  --bg: #f5f7fb;
+  --panel: #ffffff;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --border: #e5e7eb;
+  --accent: #1f6feb; /* soft blue */
+}
+
+html, body, #root { height: 100%; }
 body {
   margin: 0;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto;
-  background: #f9fafb;
-  color: #0f172a;
+  background: var(--bg);
+  color: var(--ink);
 }
 
-header {
-  background: #0f172a;
-  color: #fff;
-  padding: 12px 20px;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-}
-
-main {
+/* -------------------------------------------------------------
+ * App grid
+ * ----------------------------------------------------------- */
+.app-grid {
   display: grid;
-  place-items: center;
-  min-height: calc(100vh - 50px);
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
 }
 
-/* Reusable card styling for Hello component */
-.card {
-  padding: 16px 20px;
-  border: 1px solid #e5e7eb;
+/* -------------------------------------------------------------
+ * Sidebar
+ * ----------------------------------------------------------- */
+.sidebar {
+  background: #0f172a;
+  color: #cbd5e1;
+  padding: 16px;
+  border-right: 1px solid #0b1220;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.brand { font-weight: 700; color: #fff; }
+
+.chat-btn {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06);
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.list { display: grid; gap: 10px; }
+.list-item {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  padding: 10px;
+  cursor: pointer;
+}
+.list-title { font-weight: 600; color: #fff; }
+.list-date { font-size: 12px; color: #94a3b8; }
+.muted { color: #94a3b8; font-size: 14px; }
+
+/* -------------------------------------------------------------
+ * Main column
+ * ----------------------------------------------------------- */
+.main {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
 }
 
-.card h1 {
-  margin: 0;
-  font-size: 22px;
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #0b1220;
+  color: #e5e7eb;
+  border-bottom: 1px solid #0f172a;
 }
 
-.card p {
-  margin-top: 8px;
-  color: #475569;
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
-.chat { width: 100%; max-width: 760px; padding: 12px; }
+.content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px 20px 40px;
+  display: grid;
+  gap: 16px;
+}
+
+/* Welcome card */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.04);
+  width: fit-content;
+}
+.card h1 { margin: 0; font-size: 20px; }
+.card p  { margin: 6px 0 0; color: var(--muted); }
+
+/* API status text */
+.status { font-size: 14px; color: var(--muted); }
+
+/* -------------------------------------------------------------
+ * Chat area
+ * ----------------------------------------------------------- */
+.chat { width: 100%; }
 
 .chat-row {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 8px;
-}
-
-.chat-input {
-  height: 42px;
-  padding: 8px 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  outline: none;
-}
-
-.chat-input:focus { border-color: #93c5fd; }
-
-.chat-btn {
-  height: 42px;
-  padding: 0 14px;
-  border: 1px solid #e5e7eb;
-  background: #f8fafc;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.chat-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.chat-error {
-  margin-top: 10px;
-  color: #dc2626;
-  font-size: 14px;
-}
-
-/* assistant bubble */
-.bubble {
-  margin-top: 14px;
-  padding: 12px 14px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  background: #ffffff;
-}
-
-.bubble-role {
-  font-size: 12px;
-  color: #64748b;
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-/* --- conversation history list ---------------- */
-.messages {
-  margin-top: 14px;
-  display: grid;
   gap: 10px;
 }
 
-.bubble.user {
+.chat-input {
+  height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  outline: none;
+  background: #fff;
+}
+.chat-input:focus { border-color: #bcd3ff; }
+
+.chat-btn { /* already styled in sidebar; override here for light area */
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
   background: #f8fafc;
-  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  color: var(--ink);
 }
 
-.bubble.assistant {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-}
-
-.bubble-content { white-space: pre-wrap; }
-
-.placeholder {
-  text-align: center;
-  color: #64748b;
-  margin-top: 20px;
-  font-size: 14px;
-}
-
-/* small meta row under the composer */
 .chat-meta {
   display: flex;
   gap: 10px;
@@ -135,18 +168,62 @@ main {
 
 .badge {
   font-size: 12px;
-  padding: 2px 8px;
-  border: 1px solid #e5e7eb;
+  padding: 3px 10px;
+  border: 1px solid var(--border);
   border-radius: 999px;
-  color: #475569;
+  color: var(--muted);
 }
 
 .link-btn {
   padding: 0;
   background: none;
   border: none;
-  color: #2563eb;
+  color: var(--accent);
   cursor: pointer;
   font-size: 12px;
 }
-.link-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+/* Messages */
+.messages {
+  margin-top: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.bubble {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+}
+.bubble.user { background: #f8fafc; }
+.bubble.assistant { background: #ffffff; }
+.bubble-role {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.bubble-content { white-space: pre-wrap; }
+
+.placeholder {
+  text-align: center;
+  color: var(--muted);
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+/* -------------------------------------------------------------
+ * Responsive
+ * ----------------------------------------------------------- */
+@media (max-width: 900px) {
+  .app-grid {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    position: relative;
+    height: auto;
+    grid-auto-rows: max-content;
+  }
+}

@@ -1,22 +1,10 @@
-/**
- * Layout.jsx
- * -------------------------------------------------------------
- * Purpose:
- *   Provides a minimal page layout for the app.
- *   - Contains a header bar and a content area.
- *   - Uses inline styles for simplicity (no CSS libs yet).
- *
- * Props:
- *   children — any JSX passed from parent (e.g., <Hello />)
- *
- * Example:
- *   <Layout><Hello /></Layout>
- */
 export default function Layout({ children }) {
   return (
-    <>
-      <header>Brainbay — Full-stack Assignment</header>
-      <main>{children}</main>
-    </>
+    <div className="main">
+      <div className="header">
+        <div className="header-inner">Brainbay — Full-stack Assignment</div>
+      </div>
+      <div className="content">{children}</div>
+    </div>
   );
 }

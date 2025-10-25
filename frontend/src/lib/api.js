@@ -42,3 +42,15 @@ export async function sendChat(message, conversationId) {
   }
   return res.json();
 }
+
+export async function listConversations() {
+  const res = await fetch((import.meta.env.VITE_API_URL || "http://localhost:8000") + "/api/conversations");
+  if (!res.ok) throw new Error("Failed to list conversations");
+  return res.json();
+}
+
+export async function exportConversation(id) {
+  const res = await fetch((import.meta.env.VITE_API_URL || "http://localhost:8000") + `/api/export/${id}`);
+  if (!res.ok) throw new Error("Failed to export conversation");
+  return res.json();
+}
