@@ -22,3 +22,21 @@ export async function getHealth() {
     return "unreachable";
   }
 }
+
+/**
+ * Send a single-turn chat message to the backend.
+ * @param {string} message
+ * @returns {Promise<{reply: string, model: string}>}
+ */
+export async function sendChat(message) {
+  const res = await fetch(`${BASE}/api/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message }),
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(text || "Request failed");
+  }
+  return res.json();
+}
