@@ -1,0 +1,45 @@
+/* -------------------------------------------------------------
+ * Global styles for Brainbay Frontend
+ * Purpose:
+ *   - Collect inline styles here instead of keeping them in JSX.
+ *   - Keeps our components cleaner.
+ * ------------------------------------------------------------- */
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto;
+  background: #f9fafb;
+  color: #0f172a;
+}
+
+header {
+  background: #0f172a;
+  color: #fff;
+  padding: 12px 20px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+main {
+  display: grid;
+  place-items: center;
+  min-height: calc(100vh - 50px);
+}
+
+/* Reusable card styling for Hello component */
+.card {
+  padding: 16px 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.card h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.card p {
+  margin-top: 8px;
+  color: #475569;
+}
