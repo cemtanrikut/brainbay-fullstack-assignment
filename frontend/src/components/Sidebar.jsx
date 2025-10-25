@@ -1,20 +1,14 @@
-/**
- * Sidebar.jsx
- * -------------------------------------------------------------
- * Renders a simple list of conversations and allows selecting one.
- *
- * Props:
- *   items: Array<{id,title,created_at,updated_at}>
- *   selectedId: string|null
- *   onSelect(id: string): void
- *   onNew(): void
- */
-export default function Sidebar({ items = [], selectedId, onSelect, onNew }) {
+export default function Sidebar({ items = [], selectedId, onSelect, onNew, onDelete, onClearAll }) {
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
         <span className="brand">Brainbay</span>
-        <button className="chat-btn" onClick={onNew}>New chat</button>
+        <div className="sidebar-actions">
+          <button className="btn primary" onClick={onNew}>New chat</button>
+          {items.length > 0 && (
+            <button className="btn subtle" onClick={onClearAll} title="Clear all conversations">Clear</button>
+          )}
+        </div>
       </div>
 
       <div className="list">
@@ -25,7 +19,19 @@ export default function Sidebar({ items = [], selectedId, onSelect, onNew }) {
             onClick={() => onSelect(c.id)}
             style={{ outline: c.id === selectedId ? "2px solid #93c5fd" : "none" }}
           >
-            <div className="list-title">{c.title}</div>
+            <div className="list-item-top">
+              <div className="list-title">{c.title}</div>
+              <button
+                className="icon-btn"
+                title="Delete"
+                onClick={(e) => {
+                  e.stopPropagation(); // prevent selecting the item
+                  onDelete?.(c.id);
+                }}
+              >
+                ✕
+              </button>
+            </div>
             <div className="list-date">{new Date(c.updated_at).toLocaleString()}</div>
           </div>
         ))}

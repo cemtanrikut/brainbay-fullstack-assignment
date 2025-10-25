@@ -69,13 +69,6 @@ body {
 }
 
 .list { display: grid; gap: 10px; }
-.list-item {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 12px;
-  padding: 10px;
-  cursor: pointer;
-}
 .list-title { font-weight: 600; color: #fff; }
 .list-date { font-size: 12px; color: #94a3b8; }
 .muted { color: #94a3b8; font-size: 14px; }
@@ -227,3 +220,50 @@ body {
     grid-auto-rows: max-content;
   }
 }
+
+/* buttons */
+.btn {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  transition: transform .06s ease, background .15s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn.primary { background: #2563eb; border-color: #2563eb; }
+.btn.subtle { background: rgba(255,255,255,0.08); }
+
+.sidebar-actions { display: flex; gap: 8px; }
+
+/* list card polish */
+.list-item {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 10px;
+  cursor: pointer;
+  transition: transform .06s ease, background .15s ease, border-color .15s ease;
+}
+.list-item:hover { transform: translateY(-1px); background: rgba(255,255,255,0.08); }
+
+.list-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 8px;
+}
+
+.icon-btn {
+  border: none;
+  background: transparent;
+  color: #cbd5e1;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 8px;
+}
+.icon-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }

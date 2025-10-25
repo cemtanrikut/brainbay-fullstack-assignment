@@ -54,3 +54,17 @@ export async function exportConversation(id) {
   if (!res.ok) throw new Error("Failed to export conversation");
   return res.json();
 }
+
+export async function deleteConversation(id) {
+  const base = import.meta.env.VITE_API_URL || "http://localhost:8000";
+  const res = await fetch(`${base}/api/conversations/${id}`, { method: "DELETE" });
+  if (!res.ok) throw new Error("Failed to delete conversation");
+  return res.json();
+}
+
+export async function clearAllConversations() {
+  const base = import.meta.env.VITE_API_URL || "http://localhost:8000";
+  const res = await fetch(`${base}/api/conversations`, { method: "DELETE" });
+  if (!res.ok) throw new Error("Failed to clear conversations");
+  return res.json();
+}
