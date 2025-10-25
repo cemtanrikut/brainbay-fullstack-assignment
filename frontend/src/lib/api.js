@@ -1,16 +1,13 @@
 /**
  * api.js
  * -------------------------------------------------------------
- * Small API helper for the frontend.
- * - Centralizes base URL and fetch wrappers.
- * - Keeps App.jsx clean and testable.
+ * Centralizes base URL and fetch wrappers.
  */
 
 const BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 /**
- * Ping backend health endpoint.
- * @returns {Promise<"ok" | "unreachable" | string>}
+ * GET /api/health
  */
 export async function getHealth() {
   try {
@@ -24,16 +21,21 @@ export async function getHealth() {
 }
 
 /**
- * Send a single-turn chat message to the backend.
- * @param {string} message
- * @returns {Promise<{reply: string, model: string}>}
+ * POST /api/chat
+ * @param {string} message - user input
+ * @param {string|undefined} conversationId - optional existing conversation id
+ * @returns {Promise<{reply:string, model:string, conversation_id:string, history:Array<{role:string, content:string}>}>}
  */
-export async function sendChat(message) {
+export async function sendChat(message, conversationId) {
+  const payload = { message };
+  if (conversationId) payload.conversation_id = conversationId;
+
   const res = await fetch(`${BASE}/api/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message }),
+    body: JSON.stringify(payload),
   });
+
   if (!res.ok) {
     const text = await res.text().catch(() => "");
     throw new Error(text || "Request failed");

@@ -98,3 +98,55 @@ main {
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
+
+/* --- conversation history list ---------------- */
+.messages {
+  margin-top: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.bubble.user {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+}
+
+.bubble.assistant {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.bubble-content { white-space: pre-wrap; }
+
+.placeholder {
+  text-align: center;
+  color: #64748b;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+/* small meta row under the composer */
+.chat-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.badge {
+  font-size: 12px;
+  padding: 2px 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  color: #475569;
+}
+
+.link-btn {
+  padding: 0;
+  background: none;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+  font-size: 12px;
+}
+.link-btn:disabled { opacity: 0.7; cursor: not-allowed; }

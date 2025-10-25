@@ -1,20 +1,19 @@
 /**
  * ChatBox.jsx
  * -------------------------------------------------------------
- * Minimal, self-contained chat box:
- *  - Controlled input for the user's message
- *  - 'Send' button with loading state
- *  - Displays the last assistant reply below
- *
- * Notes:
- *  - Keeps styles minimal and semantic; full design comes later.
+ * Minimal chat client that:
+ *  - Keeps conversationId and history returned by the backend
+ *  - Sends user input to /api/chat
+ *  - Renders full message history via <Messages />
  */
 import { useState } from "react";
 import { sendChat } from "../lib/api.js";
+import Messages from "./Messages.jsx";
 
 export default function ChatBox() {
   const [message, setMessage] = useState("");
-  const [reply, setReply] = useState("");
+  const [conversationId, setConversationId] = useState(null);
+  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
 
@@ -24,15 +23,24 @@ export default function ChatBox() {
     if (!trimmed) return;
     setLoading(true);
     setErr("");
-    setReply("");
+
     try {
-      const data = await sendChat(trimmed);
-      setReply(data.reply || "");
+      const data = await sendChat(trimmed, conversationId || undefined);
+      // Keep latest conversation id and full history from the server
+      setConversationId(data.conversation_id);
+      setHistory(data.history || []);
+      setMessage("");
     } catch (error) {
       setErr("Failed to send message.");
     } finally {
       setLoading(false);
     }
+  }
+
+  function resetConversation() {
+    // Local reset: start a brand new conversation on next send
+    setConversationId(null);
+    setHistory([]);
   }
 
   return (
@@ -50,14 +58,20 @@ export default function ChatBox() {
         </button>
       </form>
 
+      <div className="chat-meta">
+        <span className="badge">
+          {conversationId ? `Conversation: ${conversationId.slice(0, 8)}…` : "New conversation"}
+        </span>
+        {conversationId && (
+          <button className="link-btn" onClick={resetConversation} disabled={loading}>
+            reset
+          </button>
+        )}
+      </div>
+
       {err && <div className="chat-error">{err}</div>}
 
-      {reply && (
-        <div className="bubble assistant">
-          <div className="bubble-role">assistant</div>
-          <div>{reply}</div>
-        </div>
-      )}
+      <Messages items={history} />
     </div>
   );
 }
