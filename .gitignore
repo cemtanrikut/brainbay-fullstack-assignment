@@ -1,0 +1,13 @@
+# General
+.DS_Store
+
+# Node/React
+node_modules/
+dist/
+.vite/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
