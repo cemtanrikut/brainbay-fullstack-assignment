@@ -1,7 +1,11 @@
-# General
+# -------------------------------------------------------------
+# Generic ignore rules for a mixed JS/Python project
+# -------------------------------------------------------------
+
+# macOS artifacts
 .DS_Store
 
-# Node/React
+# Node / React
 node_modules/
 dist/
 .vite/
@@ -11,3 +15,6 @@ __pycache__/
 *.pyc
 .venv/
 .env
+
+# Docker
+*.pid
