@@ -1,23 +1,23 @@
 """
-Pydantic models (request/response DTOs) for the chat API.
-Keeping them in a separate module keeps main.py lean and testable.
+Add conversation_id and history to the chat schema.
 """
 
 from pydantic import BaseModel, Field
-from typing import Literal
+from typing import Literal, List, Optional
+
+
+class ChatMessage(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str
 
 
 class ChatTurnRequest(BaseModel):
-    """
-    Minimal request for a chat turn.
-    For now, we only support a single user message.
-    """
-    message: str = Field(min_length=1, description="User input text")
+    message: str = Field(min_length=1)
+    conversation_id: Optional[str] = None  # new
 
 
 class ChatTurnResponse(BaseModel):
-    """
-    Minimal response including the assistant's reply.
-    """
     reply: str
     model: str = "dummy"
+    conversation_id: str
+    history: List[ChatMessage]

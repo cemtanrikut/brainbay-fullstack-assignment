@@ -3,8 +3,7 @@ Chat backend abstraction.
 We start with a dummy echo implementation to keep the step minimal.
 Later we can swap this with a real HF model driver without touching routes.
 """
-
-from typing import Dict, Any
+from typing import Any, Dict, List
 
 
 class DummyChatBackend:
@@ -15,6 +14,11 @@ class DummyChatBackend:
 
     name = "dummy"
 
-    def generate(self, message: str, *, params: Dict[str, Any] | None = None) -> str:
-        # params is reserved for future generation controls (temperature, etc.)
-        return f"(echo) You said: {message}"
+    def generate(self, history: List[Dict[str, Any]], *, params: Dict[str, Any] | None = None) -> str:
+        """
+        Accept the full conversation history (list of dicts with 'role'/'content'),
+        find the last user message, and echo it back.
+        """
+        last_user = next((m for m in reversed(history) if m.get("role") == "user"), None)
+        user_text = (last_user or {}).get("content", "")
+        return f"(echo) You said: {user_text}"

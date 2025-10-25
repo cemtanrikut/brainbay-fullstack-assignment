@@ -1,23 +1,18 @@
 """
-Minimal FastAPI application for the Brainbay assignment.
-
-Endpoints:
-  - GET /api/health : liveness probe
-  - POST /api/chat  : chat turn (dummy echo for now)
-
-Notes:
-  - CORS is enabled for http://localhost:5173 (Vite dev server).
+Step 9:
+  - Integrate in-memory conversation history.
+  - /api/chat now creates or updates conversation.
+  - Returns conversation_id + history.
 """
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-from .schemas import ChatTurnRequest, ChatTurnResponse
+from .schemas import ChatTurnRequest, ChatTurnResponse, ChatMessage
 from .chat_service import DummyChatBackend
+from .memory import store
 
-app = FastAPI(title="Brainbay API", version="0.2.0")
+app = FastAPI(title="Brainbay API", version="0.3.0")
 
-# Allow the Vite dev server during local development
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -26,21 +21,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Wire a tiny 'model' instance (dummy for this step)
 model = DummyChatBackend()
 
 
 @app.get("/api/health")
 def health():
-    """Return a minimal health payload to verify the API is alive."""
     return {"status": "ok"}
 
 
 @app.post("/api/chat", response_model=ChatTurnResponse)
-def chat_turn(req: ChatTurnRequest) -> ChatTurnResponse:
-    """
-    Accept a single user message and return a dummy echo reply.
-    This keeps the contract very small while we wire the pipeline.
-    """
-    reply = model.generate(req.message)
-    return ChatTurnResponse(reply=reply, model=model.name)
+def chat_turn(req: ChatTurnRequest):
+    # Create new conversation if not provided
+    if not req.conversation_id:
+        cid = store.new_conversation(req.message)
+    else:
+        cid = req.conversation_id
+        store.append(cid, "user", req.message)
+
+    # Generate assistant reply
+    reply = model.generate(store.history(cid))
+    store.append(cid, "assistant", reply)
+
+    # Return full conversation history
+    history = store.history(cid)
+    return ChatTurnResponse(
+        reply=reply,
+        model=model.name,
+        conversation_id=cid,
+        history=[ChatMessage(**m) for m in history],
+    )
