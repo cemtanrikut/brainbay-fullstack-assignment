@@ -59,6 +59,20 @@ class InMemoryStore:
         items = list(self._meta.values())
         # Sort by updated_at (newest first)
         return sorted(items, key=lambda m: m["updated_at"], reverse=True)
+    
+    def delete(self, cid: str) -> bool:
+        """Delete a single conversation. Returns True if existed."""
+        existed = cid in self._conversations or cid in self._meta
+        self._conversations.pop(cid, None)
+        self._meta.pop(cid, None)
+        return existed
+
+    def clear_all(self) -> int:
+        """Delete all conversations. Returns how many were removed."""
+        n = len(self._conversations)
+        self._conversations.clear()
+        self._meta.clear()
+        return n
 
 # Create a single global instance for import convenience
 store = InMemoryStore()

@@ -13,7 +13,7 @@ from .schemas import (
 from .chat_service import DummyChatBackend
 from .memory import store
 
-app = FastAPI(title="Brainbay API", version="0.4.0")
+app = FastAPI(title="Brainbay API", version="0.5.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -62,3 +62,17 @@ def chat_turn(req: ChatTurnRequest):
         conversation_id=cid,
         history=[ChatMessage(**m) for m in history],
     )
+
+@app.delete("/api/conversations/{conversation_id}")
+def delete_conversation(conversation_id: str):
+    """Delete a single conversation by id."""
+    ok = store.delete(conversation_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    return {"ok": True, "deleted": conversation_id}
+
+@app.delete("/api/conversations")
+def delete_all_conversations():
+    """Dangerous: delete all conversations (used for demos/tests)."""
+    removed = store.clear_all()
+    return {"ok": True, "removed": removed}
