@@ -1,19 +1,15 @@
-"""
-Step 11:
-  - Add GET /api/conversations (list metas)
-  - Add GET /api/export/{conversation_id} (full history)
-"""
-
+import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+
 from .schemas import (
     ChatTurnRequest, ChatTurnResponse, ChatMessage,
-    ConversationsResponse, ExportResponse
+    ConversationsResponse, ExportResponse,
 )
-from .chat_service import DummyChatBackend
+from .chat_service import DummyChatBackend, HFBlenderBackend
 from .memory import store
 
-app = FastAPI(title="Brainbay API", version="0.6.0")
+app = FastAPI(title="Brainbay API", version="0.7.0")
 
 origins = os.getenv("CORS_ORIGINS", "*")
 allow_origins = [o.strip() for o in origins.split(",")] if origins != "*" else ["*"]
@@ -26,12 +22,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model = DummyChatBackend()
+# Select model backend
+_backend = os.getenv("MODEL_BACKEND", "dummy").lower()
+if _backend == "hf_blender":
+    model = HFBlenderBackend()
+else:
+    model = DummyChatBackend()
 
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok"}
+    return {"status": "ok", "backend": getattr(model, "name", "unknown")}
 
 
 @app.get("/api/conversations", response_model=ConversationsResponse)
@@ -61,21 +62,7 @@ def chat_turn(req: ChatTurnRequest):
     history = store.history(cid)
     return ChatTurnResponse(
         reply=reply,
-        model=model.name,
+        model=getattr(model, "name", "unknown"),
         conversation_id=cid,
         history=[ChatMessage(**m) for m in history],
     )
-
-@app.delete("/api/conversations/{conversation_id}")
-def delete_conversation(conversation_id: str):
-    """Delete a single conversation by id."""
-    ok = store.delete(conversation_id)
-    if not ok:
-        raise HTTPException(status_code=404, detail="Conversation not found")
-    return {"ok": True, "deleted": conversation_id}
-
-@app.delete("/api/conversations")
-def delete_all_conversations():
-    """Dangerous: delete all conversations (used for demos/tests)."""
-    removed = store.clear_all()
-    return {"ok": True, "removed": removed}

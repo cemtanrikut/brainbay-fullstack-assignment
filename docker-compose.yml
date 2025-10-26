@@ -11,6 +11,7 @@ services:
     environment:
       # allow Nginx origin during compose; but we proxy, so not strictly needed
       - CORS_ORIGINS=http://localhost:8080
+      - MODEL_BACKEND=hf_blender 
     restart: unless-stopped
 
   frontend:
