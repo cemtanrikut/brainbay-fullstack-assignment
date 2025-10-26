@@ -13,11 +13,14 @@ from .schemas import (
 from .chat_service import DummyChatBackend
 from .memory import store
 
-app = FastAPI(title="Brainbay API", version="0.5.0")
+app = FastAPI(title="Brainbay API", version="0.6.0")
+
+origins = os.getenv("CORS_ORIGINS", "*")
+allow_origins = [o.strip() for o in origins.split(",")] if origins != "*" else ["*"]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

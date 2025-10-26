@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: brainbay-backend
+    ports:
+      - "8000:8000"     # optional: direct access for dev
+    environment:
+      # allow Nginx origin during compose; but we proxy, so not strictly needed
+      - CORS_ORIGINS=http://localhost:8080
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: brainbay-frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"       # entry point
+    restart: unless-stopped
