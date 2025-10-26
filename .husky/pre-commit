@@ -1,0 +1,5 @@
+cd ..
+
+npx --yes husky init
+
+npx --yes husky add .husky/pre-commit "cd frontend && npm run precommit"
