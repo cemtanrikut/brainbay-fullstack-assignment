@@ -12,9 +12,13 @@ export default function App() {
   const [history, setHistory] = useState([]);
   const [convos, setConvos] = useState([]);
 
-  async function refreshConvos() {
-    const data = await listConversations().catch(() => ({ conversations: [] }));
-    setConvos(data.conversations || []);
+    async function refreshConvos() {
+    try {
+      const data = await listConversations();
+      setConvos(data.conversations || []);
+    } catch {
+      setConvos([]);
+    }
   }
 
   useEffect(() => {
@@ -40,7 +44,6 @@ export default function App() {
     const ok = window.confirm("Delete this conversation?");
     if (!ok) return;
     await deleteConversation(id);
-    // If we just deleted the active one, reset the panel
     if (conversationId === id) {
       setConversationId(null);
       setHistory([]);
@@ -68,11 +71,9 @@ export default function App() {
         onClearAll={handleClearAll}
       />
       <Layout>
-        <div className="card">
-          <h1>Welcome, Cem! 👋</h1>
-          <p>React component successfully loaded.</p>
+        <div className="intro">
+          <div className="status">API status: <strong>{apiStatus}</strong></div>
         </div>
-        <div className="status">API status: <strong>{apiStatus}</strong></div>
 
         <ChatBox
           conversationId={conversationId}

@@ -1,23 +1,24 @@
-/**
- * Make ChatBox controlled from App for conversation selection:
- * Props:
- *  - conversationId, setConversationId
- *  - history, setHistory
- */
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { sendChat } from "../lib/api.js";
 import Messages from "./Messages.jsx";
 
-export default function ChatBox({
-  conversationId,
-  setConversationId,
-  history,
-  setHistory,
-  onConversationUpdate, // ✅ new optional prop
-}) {
+export default function ChatBox({ conversationId, setConversationId, history, setHistory, onConversationUpdate }) {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
+  const listRef = useRef(null);
+  const inputRef = useRef(null);            // 👈 add ref
+
+  // Auto-scroll and re-focus when history updates
+  useEffect(() => {
+    const el = listRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [history]);
+
+  useLayoutEffect(() => {
+    // run after DOM commit to win against any re-render focus shifts
+    inputRef.current?.focus();
+  }, [history]);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -32,9 +33,10 @@ export default function ChatBox({
       setHistory(data.history || []);
       setMessage("");
 
+      // focus after paint to override any transient focus grab
+      requestAnimationFrame(() => inputRef.current?.focus());
 
-// refresh sidebar if provided
-if (onConversationUpdate) onConversationUpdate();
+      onConversationUpdate?.();
     } catch {
       setErr("Failed to send message.");
     } finally {
@@ -45,37 +47,32 @@ if (onConversationUpdate) onConversationUpdate();
   function resetConversation() {
     setConversationId(null);
     setHistory([]);
+    requestAnimationFrame(() => inputRef.current?.focus());
   }
 
   return (
-    <div className="chat">
-      <form className="chat-row" onSubmit={onSubmit}>
+    <section className="chat-panel">
+      <div className="chat-meta"> {/* ... */}</div>
+
+      <div className="messages" ref={listRef}>
+        <Messages items={history} />
+        {err && <div className="chat-error">{err}</div>}
+      </div>
+
+      <form className="composer" onSubmit={onSubmit}>
         <input
+          ref={inputRef}
           className="chat-input"
           placeholder="Type your message…"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           disabled={loading}
+          autoFocus
         />
         <button className="chat-btn" disabled={loading}>
           {loading ? "Sending…" : "Send"}
         </button>
       </form>
-
-      <div className="chat-meta">
-        <span className="badge">
-          {conversationId ? `Conversation: ${conversationId.slice(0, 8)}…` : "New conversation"}
-        </span>
-        {conversationId && (
-          <button className="link-btn" onClick={resetConversation} disabled={loading}>
-            reset
-          </button>
-        )}
-      </div>
-
-      {err && <div className="chat-error">{err}</div>}
-
-      <Messages items={history} />
-    </div>
+    </section>
   );
 }

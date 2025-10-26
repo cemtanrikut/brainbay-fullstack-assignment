@@ -16,9 +16,10 @@ export default function Sidebar({ items = [], selectedId, onSelect, onNew, onDel
           <div
             key={c.id}
             className="list-item"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={() => onSelect(c.id)}
             style={{ outline: c.id === selectedId ? "2px solid #93c5fd" : "none" }}
-          >
+            >
             <div className="list-item-top">
               <div className="list-title">{c.title}</div>
               <button

@@ -15,9 +15,8 @@ export default function Messages({ items = [] }) {
       </div>
     );
   }
-
   return (
-    <div className="messages">
+    <div className="messages-inner">
       {items.map((m, i) => (
         <div key={i} className={`bubble ${m.role}`}>
           <div className="bubble-role">{m.role}</div>
